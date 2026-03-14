@@ -164,8 +164,8 @@ function bindStepSpecificEvents(step, assumptions) {
     const typeSelect = document.getElementById('vehicleTypeId');
     if (typeSelect) {
       typeSelect.addEventListener('change', async () => {
-        const { VEHICLE_TYPES, getCostDefaultsForVehicle } = await import('../data/vehicleTypes.js');
-        const vt = VEHICLE_TYPES.find(v => v.id === typeSelect.value);
+        const { getAllVehicleTypes, getCostDefaultsForVehicle } = await import('../data/vehicleTypes.js');
+        const vt = getAllVehicleTypes().find(v => v.id === typeSelect.value);
         if (!vt) return;
 
         // Update price

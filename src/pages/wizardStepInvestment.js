@@ -1,11 +1,11 @@
 import { t, getLang } from '../i18n.js';
 import { fmtCurrency } from '../components/formatters.js';
-import { VEHICLE_TYPES } from '../data/vehicleTypes.js';
+import { getAllVehicleTypes } from '../data/vehicleTypes.js';
 import { calcTotalInvestment } from '../engine/assumptions.js';
 
 export function renderStepInvestment(a) {
   const lang = getLang();
-  const vehicleOptions = VEHICLE_TYPES.map(v => {
+  const vehicleOptions = getAllVehicleTypes().map(v => {
     const label = lang === 'th' ? v.labelTh : v.label;
     const sel = v.id === a.vehicleTypeId ? 'selected' : '';
     return `<option value="${v.id}" ${sel}>${label}</option>`;
@@ -35,8 +35,7 @@ export function renderStepInvestment(a) {
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">${t('step2.quantity')}</label>
-          <input class="form-input" type="number" id="vehicleQty" value="${a.vehicleCount}" min="1" readonly style="opacity:0.7" />
-          <div class="form-hint">Set in Step 1</div>
+          <input class="form-input" type="number" id="vehicleQty" value="${a.vehicleCount}" min="1" />
         </div>
         <div class="form-group">
           <label class="form-label">${t('step2.modificationCost')}</label>
@@ -161,6 +160,8 @@ export function renderStepInvestment(a) {
 export function collectStepInvestment(a) {
   a.vehicleTypeId = document.getElementById('vehicleTypeId')?.value || a.vehicleTypeId;
   a.vehicleUnitPrice = parseFloat(document.getElementById('vehicleUnitPrice')?.value) || 0;
+  const qty = parseInt(document.getElementById('vehicleQty')?.value);
+  if (qty > 0) a.vehicleCount = qty;
   a.vehicleModificationCost = parseFloat(document.getElementById('vehicleModificationCost')?.value) || 0;
   a.buyBackPercent = parseFloat(document.getElementById('buyBackPercent')?.value) || 0;
   a.depreciationYearsVehicle = parseInt(document.getElementById('depreciationYearsVehicle')?.value) || 0;

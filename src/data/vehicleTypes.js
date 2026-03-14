@@ -67,7 +67,28 @@ export const VEHICLE_TYPES = [
   },
 ];
 
+const CUSTOM_VEHICLES_KEY = 'feast_custom_vehicles';
+
+function loadCustomVehicles() {
+  try {
+    const stored = localStorage.getItem(CUSTOM_VEHICLES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) { return []; }
+}
+
+export function saveCustomVehicles(entries) {
+  localStorage.setItem(CUSTOM_VEHICLES_KEY, JSON.stringify(entries));
+}
+
+export function getAllVehicleTypes() {
+  const customs = loadCustomVehicles().map(e => e.vehicle);
+  const builtIn = VEHICLE_TYPES.filter(v => v.id !== 'custom');
+  return [...builtIn, ...customs, VEHICLE_TYPES.find(v => v.id === 'custom')];
+}
+
 export function getVehicleById(id) {
+  const custom = loadCustomVehicles().find(e => e.vehicle.id === id);
+  if (custom) return custom.vehicle;
   return VEHICLE_TYPES.find(v => v.id === id) || VEHICLE_TYPES[VEHICLE_TYPES.length - 1];
 }
 
@@ -137,6 +158,7 @@ export const VEHICLE_COST_DEFAULTS = {
 };
 
 export function getCostDefaultsForVehicle(id) {
+  // Check cost overrides first
   try {
     const stored = localStorage.getItem('feast_vehicle_costs');
     if (stored) {
@@ -144,5 +166,10 @@ export function getCostDefaultsForVehicle(id) {
       if (overrides[id]) return overrides[id];
     }
   } catch (e) { /* ignore parse errors */ }
-  return VEHICLE_COST_DEFAULTS[id] || null;
+  // Check built-in defaults
+  if (VEHICLE_COST_DEFAULTS[id]) return VEHICLE_COST_DEFAULTS[id];
+  // Check custom vehicles
+  const custom = loadCustomVehicles().find(e => e.vehicle.id === id);
+  if (custom) return custom.costs;
+  return null;
 }
