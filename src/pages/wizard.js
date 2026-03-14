@@ -143,17 +143,33 @@ export function bindWizardEvents(state, navigate, saveProjects, showToast) {
 }
 
 function bindStepSpecificEvents(step, assumptions) {
-  // Step 2: auto-update vehicle price when type changes
+  // Step 2: auto-update vehicle price + fuel defaults when type changes
   if (step === 1) {
     const typeSelect = document.getElementById('vehicleTypeId');
     if (typeSelect) {
       typeSelect.addEventListener('change', async () => {
         const { VEHICLE_TYPES } = await import('../data/vehicleTypes.js');
+        const { DEFAULTS } = await import('../data/defaults.js');
         const vt = VEHICLE_TYPES.find(v => v.id === typeSelect.value);
         if (vt) {
+          // Update price
           const priceInput = document.getElementById('vehicleUnitPrice');
           if (priceInput && vt.defaultPrice > 0) {
             priceInput.value = vt.defaultPrice;
+          }
+          // Update fuel defaults based on EV vs ICE
+          if (vt.type === 'ev') {
+            assumptions.fuel.consumptionRate = vt.consumptionRate || 0.8;
+            assumptions.fuel.fuelPrice = DEFAULTS.evChargingRate || 6;
+            // Auto-fill battery fields for EV
+            const batteryInput = document.getElementById('batteryCapacityKWh');
+            if (batteryInput && vt.batteryKWh) {
+              batteryInput.value = vt.batteryKWh;
+            }
+          } else {
+            // ICE defaults
+            assumptions.fuel.consumptionRate = vt.fuelConsumption ? (1 / vt.fuelConsumption) : 0.1429;
+            assumptions.fuel.fuelPrice = DEFAULTS.dieselPrice || 32;
           }
         }
       });

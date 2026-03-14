@@ -1,7 +1,18 @@
 import { t } from '../i18n.js';
+import { getVehicleById } from '../data/vehicleTypes.js';
 
 export function renderStepCosts(a) {
   const chevronSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>`;
+
+  const vt = getVehicleById(a.vehicleTypeId);
+  const isEV = vt.type === 'ev';
+  const fuelTitle = isEV ? t('step4.fuelEV') : t('step4.fuelDiesel');
+  const fuelIcon = isEV ? '&#9889;' : '&#9981;';
+  const consumptionLabel = isEV ? t('step4.consumptionEV') : t('step4.consumptionDiesel');
+  const priceLabel = isEV ? t('step4.fuelPriceEV') : t('step4.fuelPriceDiesel');
+  const badge = isEV
+    ? '<span class="badge badge-success" style="margin-left:8px">EV</span>'
+    : '<span class="badge badge-muted" style="margin-left:8px">ICE</span>';
 
   return `
     <h3 class="card-title mb-6">${t('step4.title')}</h3>
@@ -10,8 +21,9 @@ export function renderStepCosts(a) {
     <div class="collapsible-section open">
       <div class="collapsible-header">
         <div class="collapsible-header-left">
-          <div class="collapsible-icon">&#9981;</div>
-          <h4>${t('step4.fuel')}</h4>
+          <div class="collapsible-icon">${fuelIcon}</div>
+          <h4>${fuelTitle}</h4>
+          ${badge}
         </div>
         <span class="collapsible-chevron">${chevronSvg}</span>
       </div>
@@ -22,12 +34,11 @@ export function renderStepCosts(a) {
             <input class="form-input" type="number" id="fuel_distance" value="${a.fuel.distancePerTrip}" min="0" step="1" />
           </div>
           <div class="form-group">
-            <label class="form-label">${t('step4.consumptionRate')}</label>
+            <label class="form-label">${consumptionLabel}</label>
             <input class="form-input" type="number" id="fuel_consumption" value="${a.fuel.consumptionRate}" min="0" step="0.001" />
-            <div class="form-hint">L/km or kWh/km</div>
           </div>
           <div class="form-group">
-            <label class="form-label">${t('step4.fuelPrice')}</label>
+            <label class="form-label">${priceLabel}</label>
             <input class="form-input" type="number" id="fuel_price" value="${a.fuel.fuelPrice}" min="0" step="0.1" />
           </div>
           <div class="form-group">
