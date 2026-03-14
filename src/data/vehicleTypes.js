@@ -47,6 +47,16 @@ export const VEHICLE_TYPES = [
     consumptionRate: 1.2,
   },
   {
+    id: 'ev_van_14',
+    label: 'EV Van 14-seat',
+    labelTh: 'รถ EV แวน 14 ที่นั่ง',
+    defaultPrice: 2500000,
+    seats: 14,
+    type: 'ev',
+    batteryKWh: 90,
+    consumptionRate: 0.6,
+  },
+  {
     id: 'ev_truck_light',
     label: 'EV Light Truck',
     labelTh: 'รถ EV บรรทุกเบา',
@@ -144,6 +154,16 @@ export const VEHICLE_COST_DEFAULTS = {
     maintenance: { costPerKm: 0.50, escalationRate: 0 },
     chargerMaintenance: { annualCost: 25000, escalationRate: 2 },
     otherCosts: { monthlyPerVehicle: 2000 },
+  },
+  ev_van_14: {
+    fuel: { distancePerTrip: 80, consumptionRate: 0.6, fuelPrice: 6, wastePercent: 0 },
+    labor: { driverSalary: 15942, monitorSalary: 14293, supervisorSalary: 16924, supervisorSharePercent: 6.67 },
+    tires: { pricePerUnit: 4500, tiresPerVehicle: 4, replacementKm: 55000 },
+    insurance: { vehicleInsuranceYear1: 16000, annualIncrease: 0, cargoInsurance: 0, accidentAdjustment: 0, noClaimDiscount: 0.10 },
+    expressway: { tollPerTrip: 0 },
+    maintenance: { costPerKm: 0.30, escalationRate: 0 },
+    chargerMaintenance: { annualCost: 12000, escalationRate: 2 },
+    otherCosts: { monthlyPerVehicle: 1100 },
   },
   ev_truck_light: {
     fuel: { distancePerTrip: 80, consumptionRate: 0.7, fuelPrice: 6, wastePercent: 0 },
