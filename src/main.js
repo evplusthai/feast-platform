@@ -155,6 +155,14 @@ async function renderPage() {
       break;
     }
 
+    case 'data': {
+      const { renderDataManager, bindDataEvents } = await import('./pages/dataManager.js');
+      content.innerHTML = renderDataManager();
+      bindDataEvents(state, navigate, saveProjects, showToast);
+      if (headerTitle) headerTitle.textContent = t('nav.data');
+      break;
+    }
+
     default:
       navigate('dashboard');
   }

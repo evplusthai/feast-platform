@@ -137,5 +137,12 @@ export const VEHICLE_COST_DEFAULTS = {
 };
 
 export function getCostDefaultsForVehicle(id) {
+  try {
+    const stored = localStorage.getItem('feast_vehicle_costs');
+    if (stored) {
+      const overrides = JSON.parse(stored);
+      if (overrides[id]) return overrides[id];
+    }
+  } catch (e) { /* ignore parse errors */ }
   return VEHICLE_COST_DEFAULTS[id] || null;
 }

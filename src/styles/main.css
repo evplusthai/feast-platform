@@ -844,6 +844,18 @@ tbody tr:last-child td {
 ::-webkit-scrollbar-thumb { background: var(--color-neutral-600); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-neutral-500); }
 
+/* ── Data Manager ── */
+.data-section-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-primary-400);
+  padding: var(--space-3) 0 var(--space-1);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: var(--space-3);
+  margin-top: var(--space-4);
+}
+
 /* ── Print ── */
 @media print {
   .app-sidebar, .app-header, .nav-item, .btn, #toast-container { display: none !important; }
