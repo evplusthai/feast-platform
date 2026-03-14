@@ -25,12 +25,12 @@ export function renderStepFinancing(a) {
         <div class="form-group">
           <label class="form-label">${t('step5.equityPercent')}</label>
           <input class="form-input" type="number" id="equityPercent" value="${a.equityPercent}" min="0" max="100" step="0.1" />
-          <div class="form-hint">&#3647; ${fmtCurrency(equityAmt)}</div>
+          <div class="form-hint" id="equityAmtHint">&#3647; ${fmtCurrency(equityAmt)}</div>
         </div>
         <div class="form-group">
           <label class="form-label">${t('step5.debtPercent')}</label>
-          <input class="form-input" type="number" value="${(100 - a.equityPercent).toFixed(1)}" readonly style="opacity:0.7" />
-          <div class="form-hint">&#3647; ${fmtCurrency(debtAmt)}</div>
+          <input class="form-input" type="number" id="debtPercent" value="${(100 - a.equityPercent).toFixed(1)}" readonly style="opacity:0.7" />
+          <div class="form-hint" id="debtAmtHint">&#3647; ${fmtCurrency(debtAmt)}</div>
         </div>
       </div>
 

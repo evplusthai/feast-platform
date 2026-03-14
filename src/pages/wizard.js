@@ -202,6 +202,27 @@ function bindStepSpecificEvents(step, assumptions) {
     });
   }
 
+  // Step 5: live update Debt % when Equity changes
+  if (step === 4) {
+    const equityInput = document.getElementById('equityPercent');
+    if (equityInput) {
+      equityInput.addEventListener('input', () => {
+        const eq = parseFloat(equityInput.value) || 0;
+        const debtInput = document.getElementById('debtPercent');
+        if (debtInput) debtInput.value = (100 - eq).toFixed(1);
+        // Update amount hints
+        const { calcTotalInvestment } = assumptions;
+        const totalInv = (assumptions.vehicleUnitPrice + assumptions.vehicleModificationCost) * assumptions.vehicleCount
+          + (assumptions.evChargerUnitPrice * assumptions.evChargerCount) + assumptions.evChargerInstallCost
+          + Object.values(assumptions.infrastructure).reduce((s, v) => s + (v || 0), 0);
+        const eqHint = document.getElementById('equityAmtHint');
+        const debtHint = document.getElementById('debtAmtHint');
+        if (eqHint) eqHint.innerHTML = `&#3647; ${(totalInv * eq / 100).toLocaleString()}`;
+        if (debtHint) debtHint.innerHTML = `&#3647; ${(totalInv * (100 - eq) / 100).toLocaleString()}`;
+      });
+    }
+  }
+
   // Step 4: collapsible sections
   if (step === 3) {
     document.querySelectorAll('.collapsible-header').forEach(header => {
