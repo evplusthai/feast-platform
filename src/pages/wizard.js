@@ -121,6 +121,12 @@ export function bindWizardEvents(state, navigate, saveProjects, showToast) {
         navigate('results');
       } catch (e) {
         console.error('Generation failed:', e);
+        // Stale cache: dynamic import fails after deployment with new hashes
+        if (e.message?.includes('dynamically imported module') || e.message?.includes('Failed to fetch')) {
+          showToast('New version available — reloading...', 'info');
+          setTimeout(() => window.location.reload(), 800);
+          return;
+        }
         showToast(`${t('common.error')}: ${e.message}`, 'error');
         generateBtn.disabled = false;
         generateBtn.textContent = t('wizard.generate');
