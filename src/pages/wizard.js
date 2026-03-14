@@ -142,35 +142,48 @@ export function bindWizardEvents(state, navigate, saveProjects, showToast) {
   bindStepSpecificEvents(state.wizardStep, scenario.assumptions);
 }
 
+function applyCostDefaults(assumptions, defaults) {
+  if (defaults.fuel) Object.assign(assumptions.fuel, defaults.fuel);
+  if (defaults.labor) {
+    const { driverCount, monitorCount } = assumptions.labor;
+    Object.assign(assumptions.labor, defaults.labor);
+    assumptions.labor.driverCount = driverCount;
+    assumptions.labor.monitorCount = monitorCount;
+  }
+  if (defaults.tires) Object.assign(assumptions.tires, defaults.tires);
+  if (defaults.insurance) Object.assign(assumptions.insurance, defaults.insurance);
+  if (defaults.expressway) Object.assign(assumptions.expressway, defaults.expressway);
+  if (defaults.maintenance) Object.assign(assumptions.maintenance, defaults.maintenance);
+  if (defaults.chargerMaintenance) Object.assign(assumptions.chargerMaintenance, defaults.chargerMaintenance);
+  if (defaults.otherCosts) Object.assign(assumptions.otherCosts, defaults.otherCosts);
+}
+
 function bindStepSpecificEvents(step, assumptions) {
-  // Step 2: auto-update vehicle price + fuel defaults when type changes
+  // Step 2: auto-update vehicle price + all cost defaults when type changes
   if (step === 1) {
     const typeSelect = document.getElementById('vehicleTypeId');
     if (typeSelect) {
       typeSelect.addEventListener('change', async () => {
-        const { VEHICLE_TYPES } = await import('../data/vehicleTypes.js');
-        const { DEFAULTS } = await import('../data/defaults.js');
+        const { VEHICLE_TYPES, getCostDefaultsForVehicle } = await import('../data/vehicleTypes.js');
         const vt = VEHICLE_TYPES.find(v => v.id === typeSelect.value);
-        if (vt) {
-          // Update price
-          const priceInput = document.getElementById('vehicleUnitPrice');
-          if (priceInput && vt.defaultPrice > 0) {
-            priceInput.value = vt.defaultPrice;
+        if (!vt) return;
+
+        // Update price
+        const priceInput = document.getElementById('vehicleUnitPrice');
+        if (priceInput && vt.defaultPrice > 0) {
+          priceInput.value = vt.defaultPrice;
+        }
+        // Auto-fill battery fields for EV
+        if (vt.type === 'ev') {
+          const batteryInput = document.getElementById('batteryCapacityKWh');
+          if (batteryInput && vt.batteryKWh) {
+            batteryInput.value = vt.batteryKWh;
           }
-          // Update fuel defaults based on EV vs ICE
-          if (vt.type === 'ev') {
-            assumptions.fuel.consumptionRate = vt.consumptionRate || 0.8;
-            assumptions.fuel.fuelPrice = DEFAULTS.evChargingRate || 6;
-            // Auto-fill battery fields for EV
-            const batteryInput = document.getElementById('batteryCapacityKWh');
-            if (batteryInput && vt.batteryKWh) {
-              batteryInput.value = vt.batteryKWh;
-            }
-          } else {
-            // ICE defaults
-            assumptions.fuel.consumptionRate = vt.fuelConsumption ? (1 / vt.fuelConsumption) : 0.1429;
-            assumptions.fuel.fuelPrice = DEFAULTS.dieselPrice || 32;
-          }
+        }
+        // Apply all cost defaults for the selected vehicle type
+        const costDefaults = getCostDefaultsForVehicle(typeSelect.value);
+        if (costDefaults) {
+          applyCostDefaults(assumptions, costDefaults);
         }
       });
     }

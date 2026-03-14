@@ -1,6 +1,10 @@
 import { DEFAULTS } from '../data/defaults.js';
+import { getCostDefaultsForVehicle } from '../data/vehicleTypes.js';
 
 export function getDefaultAssumptions() {
+  const defaultVehicle = 'toyota_commuter';
+  const costDefaults = getCostDefaultsForVehicle(defaultVehicle);
+
   return {
     // ── Project Info ──
     projectName: '',
@@ -14,7 +18,7 @@ export function getDefaultAssumptions() {
     vehicleCount: 15,
 
     // ── Investment ──
-    vehicleTypeId: 'toyota_commuter',
+    vehicleTypeId: defaultVehicle,
     vehicleUnitPrice: 1300000,
     vehicleModificationCost: 0,
     buyBackPercent: 0,
@@ -81,54 +85,15 @@ export function getDefaultAssumptions() {
     evChargerRentalIncome: 0,
     otherIncome: 0,
 
-    // ── Operating Costs ──
-    fuel: {
-      distancePerTrip: 100,
-      consumptionRate: 0.1429,  // L/km (or kWh/km for EV)
-      fuelPrice: 32,            // THB/L or THB/kWh
-      wastePercent: 0,
-    },
-
-    labor: {
-      driverSalary: 15942,
-      driverCount: 15,
-      monitorSalary: 14293,
-      monitorCount: 15,
-      supervisorSalary: 16924,
-      supervisorSharePercent: 6.67,
-    },
-
-    tires: {
-      pricePerUnit: 4500,
-      tiresPerVehicle: 4,
-      replacementKm: 50000,
-    },
-
-    insurance: {
-      vehicleInsuranceYear1: 9827,
-      annualIncrease: 0,
-      cargoInsurance: 0,
-      accidentAdjustment: 0,
-      noClaimDiscount: 0.10,
-    },
-
-    expressway: {
-      tollPerTrip: 0,
-    },
-
-    maintenance: {
-      costPerKm: 0.62,
-      escalationRate: 0,
-    },
-
-    chargerMaintenance: {
-      annualCost: 0,
-      escalationRate: 0,
-    },
-
-    otherCosts: {
-      monthlyPerVehicle: 1014,
-    },
+    // ── Operating Costs (from vehicle cost defaults) ──
+    fuel: { ...costDefaults.fuel },
+    labor: { driverCount: 15, monitorCount: 15, ...costDefaults.labor },
+    tires: { ...costDefaults.tires },
+    insurance: { ...costDefaults.insurance },
+    expressway: { ...costDefaults.expressway },
+    maintenance: { ...costDefaults.maintenance },
+    chargerMaintenance: { ...costDefaults.chargerMaintenance },
+    otherCosts: { ...costDefaults.otherCosts },
 
     // ── Financing ──
     equityPercent: 0,
